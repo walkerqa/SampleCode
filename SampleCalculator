@@ -1,0 +1,97 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+namespace ----
+{
+    public partial class ---- : System.Web.UI.Page
+    {
+        double annualIncome;
+        double nonTaxIncome;
+        double grossIncome;
+        double taxableIncome;
+        double totalIncome;
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (IsPostBack == false)
+            {
+                aIncome_box.Text = "0";
+                ntIncome_box.Text = "0";
+            }
+        }
+
+        protected void submit_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                //Pulls input from the textbox and converts is to a double
+                annualIncome = double.Parse(aIncome_box.Text);
+                nonTaxIncome = double.Parse(ntIncome_box.Text);
+
+                //Allows text wrapping in note area
+                notebox.Wrap = true;
+
+                //Calculates the gross income by multiplying the non taxable income
+                //by 1.25
+                grossIncome = nonTaxIncome * 1.25;
+                gIncome_box.Text = grossIncome.ToString();
+
+                //Taxable income is calculated by subtracing the non taxable income from the annual income
+                taxableIncome = annualIncome - nonTaxIncome;
+
+                //Displays the value of taxable income to the display feild for the associates to see. 
+                tIncome_box.Text = taxableIncome.ToString();
+
+
+                // If the customer mentions that they do have non taxable income, then the program
+                // will multiply that non taxable income by 1.25. In order to prevent negative numbers
+                //the program checks to make sure that there is non taxable income and then subtracting 
+                //the non taxable income from the gross income in order to calculate the total income correctly
+                if (grossIncome > nonTaxIncome)
+                {
+                    totalIncome = annualIncome + (grossIncome - nonTaxIncome);
+                    total_box.Text = totalIncome.ToString();
+                }
+
+                //This handles the calculation is no non taxable income is given. 
+                else
+                {
+                    totalIncome = annualIncome + nonTaxIncome + grossIncome;
+                    total_box.Text = totalIncome.ToString();
+                }
+
+                //generates the note that associates can copy and paste. Displays in the appropriate field. 
+                notebox.Text = "Taxable Income " + taxableIncome.ToString() + ", " + "Nontaxable Income " + nonTaxIncome.ToString() 
+                    + ", " + "Grossed up Nontaxable Income " + grossIncome.ToString() + ", " + "Final Income " + totalIncome.ToString() + ".";
+            }
+            catch (Exception ex)
+            {
+                //Error message displays if incorrect values are inputed into the text boxes on the form. 
+                
+                notebox.Text = ex.Message;
+            }
+            
+        }
+
+        protected void close_Click(object sender, EventArgs e)
+        {
+            
+            this.ClientScript.RegisterClientScriptBlock(this.GetType(), "Close", "window.close()", true);
+        }
+
+        protected void reset_Click(object sender, EventArgs e)
+        {
+            notebox.Text = " ";
+            aIncome_box.Text = "0";
+            ntIncome_box.Text = "0";
+            total_box.Text = " ";
+            tIncome_box.Text = " ";
+            gIncome_box.Text = " ";
+
+        }
+    }
+}
